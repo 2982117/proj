@@ -1,17 +1,11 @@
 /* ============================================================
-   BrewLab — script.js
+   BrewLab — script.js (v2)
+   Отправка в Google Sheets через скрытый iframe+form
    ============================================================ */
 
-/* ------------------------------------------------------------
-   ⚙️ НАСТРОЙКА: URL вашего Google Apps Script Web App
-   Получите его после публикации скрипта (см. инструкцию).
-   Замените ссылку ниже на свою.
-   ------------------------------------------------------------ */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/library/d/1p5OOvuVXVtXkqAFOHsFlgGU9LB3wRvh64jek0FWv6y73SWXdSmTNZ32p/3";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjE1T8sR0cIZS9ia67ffdmVIoa38NosqUHPPCFyfzUHk2Z3ga9-Tl4EbhqK0QQmYDV/exec";
 
-/* ------------------------------------------------------------
-   1. МОБИЛЬНОЕ МЕНЮ (бургер)
-   ------------------------------------------------------------ */
+/* ---------- 1. Бургер ---------- */
 const burger = document.getElementById("burger");
 const nav = document.getElementById("nav");
 
@@ -21,7 +15,6 @@ if (burger && nav) {
     nav.classList.toggle("open");
   });
 
-  // Закрываем меню при клике на ссылку
   nav.querySelectorAll(".nav__link").forEach((link) => {
     link.addEventListener("click", () => {
       burger.classList.remove("active");
@@ -29,189 +22,171 @@ if (burger && nav) {
     });
   });
 
-  // Закрываем меню при клике вне его
   document.addEventListener("click", (e) => {
-    const isClickInsideNav = nav.contains(e.target);
-    const isClickOnBurger = burger.contains(e.target);
-
-    if (!isClickInsideNav && !isClickOnBurger && nav.classList.contains("open")) {
+    if (
+      !nav.contains(e.target) &&
+      !burger.contains(e.target) &&
+      nav.classList.contains("open")
+    ) {
       burger.classList.remove("active");
       nav.classList.remove("open");
     }
   });
 }
 
-/* ------------------------------------------------------------
-   2. ПЛАВНЫЙ СКРОЛЛ ПО ЯКОРЯМ
-   ------------------------------------------------------------ */
+/* ---------- 2. Плавный скролл ---------- */
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     const targetId = this.getAttribute("href");
-    if (targetId === "#" || targetId === "") return;
-
+    if (!targetId || targetId === "#") return;
     const target = document.querySelector(targetId);
     if (!target) return;
-
     e.preventDefault();
-    const headerOffset = 82;
-    const targetPosition =
-      target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
-
-    window.scrollTo({
-      top: targetPosition,
-      behavior: "smooth",
-    });
+    const y = target.getBoundingClientRect().top + window.pageYOffset - 82;
+    window.scrollTo({ top: y, behavior: "smooth" });
   });
 });
 
-/* ------------------------------------------------------------
-   3. ФОРМА ЗАЯВКИ — валидация и отправка в Google Таблицу
-   ------------------------------------------------------------ */
+/* ---------- 3. Отправка формы ---------- */
 const form = document.getElementById("order-form");
 const submitBtn = document.getElementById("submit-btn");
 const statusEl = document.getElementById("form-status");
 
-// --- Валидация телефона: разрешаем цифры, +, пробелы, скобки, дефис
+// Маска телефона
 const phoneInput = document.getElementById("phone");
-
 if (phoneInput) {
   phoneInput.addEventListener("input", (e) => {
-    let value = e.target.value.replace(/[^\d+()\-\s]/g, "");
-    if (value.length > 18) value = value.slice(0, 18);
-    e.target.value = value;
+    let v = e.target.value.replace(/[^\d+()\-\s]/g, "");
+    if (v.length > 18) v = v.slice(0, 18);
+    e.target.value = v;
     e.target.classList.remove("error");
   });
 }
 
-// --- Убираем класс ошибки при вводе
-form?.querySelectorAll("input, textarea, select").forEach((field) => {
-  field.addEventListener("input", () => field.classList.remove("error"));
-  field.addEventListener("change", () => field.classList.remove("error"));
+// Снятие ошибок при вводе
+form?.querySelectorAll("input, textarea, select").forEach((f) => {
+  f.addEventListener("input", () => f.classList.remove("error"));
+  f.addEventListener("change", () => f.classList.remove("error"));
 });
 
-// --- Простая валидация
-function validateForm(data) {
-  const errors = [];
-  const nameInput = document.getElementById("name");
-  const phoneField = document.getElementById("phone");
+function showStatus(msg, type) {
+  if (!statusEl) return;
+  statusEl.textContent = msg;
+  statusEl.className = "form__status " + (type || "");
+}
 
+function validate(data) {
+  const errors = [];
   if (!data.name || data.name.trim().length < 2) {
     errors.push("Введите имя (минимум 2 символа)");
-    nameInput?.classList.add("error");
+    document.getElementById("name")?.classList.add("error");
   }
-
-  // Телефон: минимум 10 цифр
   const digits = (data.phone || "").replace(/\D/g, "");
   if (digits.length < 10) {
     errors.push("Введите корректный телефон");
-    phoneField?.classList.add("error");
+    document.getElementById("phone")?.classList.add("error");
   }
-
   return errors;
 }
 
-// --- Показать статус
-function showStatus(message, type) {
-  if (!statusEl) return;
-  statusEl.textContent = message;
-  statusEl.className = "form__status " + type;
+/**
+ * Отправка данных в Google Apps Script через скрытый iframe + form.
+ * Это нативный POST браузера — работает всегда, CORS не мешает.
+ */
+function submitViaIframe(data) {
+  return new Promise((resolve) => {
+    const iframeName = "gas_iframe_" + Date.now();
+    const iframe = document.createElement("iframe");
+    iframe.name = iframeName;
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+
+    const f = document.createElement("form");
+    f.method = "POST";
+    f.action = GOOGLE_SCRIPT_URL;
+    f.target = iframeName;
+    f.style.display = "none";
+
+    Object.keys(data).forEach((key) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = data[key];
+      f.appendChild(input);
+    });
+
+    document.body.appendChild(f);
+
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      try { iframe.remove(); } catch (e) {}
+      try { f.remove(); } catch (e) {}
+      resolve();
+    };
+
+    iframe.onload = () => setTimeout(finish, 300);
+    f.submit();
+    // Страховка, если onload не сработал
+    setTimeout(finish, 5000);
+  });
 }
 
-// --- Отправка формы
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Собираем данные из полей формы
-    const formData = {
-      name: form.name.value.trim(),
-      phone: form.phone.value.trim(),
-      plan: form.plan.value.trim(),
-      comment: form.comment.value.trim(),
+    const data = {
+      name: (form.name?.value || "").trim(),
+      phone: (form.phone?.value || "").trim(),
+      plan: (form.plan?.value || "").trim(),
+      comment: (form.comment?.value || "").trim(),
       page: window.location.href,
       timestamp: new Date().toLocaleString("ru-RU"),
     };
 
-    // Валидация
-    const errors = validateForm(formData);
-    if (errors.length > 0) {
+    const errors = validate(data);
+    if (errors.length) {
       showStatus(errors[0], "error");
       return;
     }
 
-    // Блокируем кнопку
     submitBtn.disabled = true;
-    const originalText = submitBtn.textContent;
+    const original = submitBtn.textContent;
     submitBtn.textContent = "Отправляем...";
     showStatus("", "");
 
     try {
-      // ⚠️ Google Apps Script требует отправку без кастомных заголовков,
-      // иначе браузер сделает CORS-preflight и всё сломается.
-      // Отправляем как form-urlencoded (script читает e.parameter)
-      const body = new URLSearchParams();
-      body.append("name", formData.name);
-      body.append("phone", formData.phone);
-      body.append("plan", formData.plan);
-      body.append("comment", formData.comment);
-      body.append("page", formData.page);
-      body.append("timestamp", formData.timestamp);
-
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors", // обходим CORS для Google Apps Script
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: body.toString(),
-      });
-
-      // При mode: "no-cors" мы не можем прочитать ответ,
-      // но если запрос дошёл — считаем успехом.
-      showStatus(
-        "✅ Заявка отправлена! Перезвоним в течение 15 минут ☕",
-        "success"
-      );
+      await submitViaIframe(data);
+      showStatus("✅ Заявка отправлена! Перезвоним в течение 15 минут ☕", "success");
       form.reset();
-
-      // Логируем для отладки (можно убрать)
-      console.log("Form sent. Response (opaque):", response);
-    } catch (error) {
-      console.error("Ошибка отправки:", error);
-      showStatus(
-        "❌ Не удалось отправить заявку. Позвоните: +7 (999) 555-22-11",
-        "error"
-      );
+    } catch (err) {
+      console.error("Submit error:", err);
+      showStatus("❌ Не удалось отправить. Позвоните: +7 (999) 555-22-11", "error");
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
+      submitBtn.textContent = original;
     }
   });
 }
 
-/* ------------------------------------------------------------
-   4. АНИМАЦИЯ ПОЯВЛЕНИЯ БЛОКОВ ПРИ СКРОЛЛЕ
-   ------------------------------------------------------------ */
-const observerOptions = {
-  threshold: 0.12,
-  rootMargin: "0px 0px -50px 0px",
-};
+/* ---------- 4. Анимация появления ---------- */
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+        observer.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.12, rootMargin: "0px 0px -50px 0px" }
+);
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = "1";
-      entry.target.style.transform = "translateY(0)";
-      observer.unobserve(entry.target);
-    }
-  });
-}, observerOptions);
-
-// Применяем только к карточкам и крупным блокам, чтобы не тормозило
 document
-  .querySelectorAll(
-    ".card, .why-item, .review, .menu-item, .geo-block, .form"
-  )
+  .querySelectorAll(".card, .why-item, .review, .menu-item, .geo-block, .form")
   .forEach((el) => {
     el.style.opacity = "0";
     el.style.transform = "translateY(20px)";
@@ -219,60 +194,37 @@ document
     observer.observe(el);
   });
 
-/* ------------------------------------------------------------
-   5. АКТИВНАЯ ССЫЛКА В МЕНЮ ПРИ СКРОЛЛЕ
-   ------------------------------------------------------------ */
+/* ---------- 5. Подсветка меню при скролле ---------- */
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav__link");
 
 if (sections.length && navLinks.length) {
-  const highlightNav = () => {
-    const scrollY = window.pageYOffset;
-
-    sections.forEach((section) => {
-      const sectionTop = section.offsetTop - 120;
-      const sectionHeight = section.offsetHeight;
-      const sectionId = section.getAttribute("id");
-
-      if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-        navLinks.forEach((link) => {
-          link.classList.remove("active");
-          if (link.getAttribute("href") === "#" + sectionId) {
-            link.classList.add("active");
-          }
-        });
-      }
-    });
-  };
-
-  window.addEventListener("scroll", highlightNav, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      const y = window.pageYOffset;
+      sections.forEach((s) => {
+        const top = s.offsetTop - 120;
+        if (y >= top && y < top + s.offsetHeight) {
+          navLinks.forEach((l) => {
+            l.classList.toggle("active", l.getAttribute("href") === "#" + s.id);
+          });
+        }
+      });
+    },
+    { passive: true }
+  );
 }
 
-/* ------------------------------------------------------------
-   6. МЕЛОЧЬ: клик на тариф → автовыбор в форме
-   При клике "Выбрать Solo/Duo/Office" в форме сразу
-   устанавливается нужный тариф.
-   ------------------------------------------------------------ */
-const planButtons = document.querySelectorAll('.card--plan .btn');
+/* ---------- 6. Выбор тарифа → автовыбор в форме ---------- */
 const planSelect = document.getElementById("plan");
-
-if (planButtons.length && planSelect) {
-  planButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      // Ищем название тарифа в карточке
-      const card = btn.closest(".card--plan");
-      const planName = card?.querySelector("h3")?.textContent?.trim();
-
-      if (!planName) return;
-
-      // Ищем соответствующий option в select
-      const optionToSelect = Array.from(planSelect.options).find((opt) =>
-        opt.value.toLowerCase().includes(planName.toLowerCase())
-      );
-
-      if (optionToSelect) {
-        planSelect.value = optionToSelect.value;
-      }
-    });
+document.querySelectorAll(".card--plan .btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const name = btn.closest(".card--plan")?.querySelector("h3")?.textContent?.trim();
+    if (!name || !planSelect) return;
+    const opt = Array.from(planSelect.options).find((o) =>
+      o.value.toLowerCase().includes(name.toLowerCase())
+    );
+    if (opt) planSelect.value = opt.value;
   });
-}
+});
