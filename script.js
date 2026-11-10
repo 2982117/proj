@@ -1,203 +1,56 @@
 /* ============================================================
-   BrewLab — script.js (v4, финальная версия для GitHub Pages)
-   Отправка: JSON через text/plain (обходит CORS)
+   BrewLab — script.js (минимальная версия)
+   Отправка заявки в Google Sheets
    ============================================================ */
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfDtxy5s52DwipaFgeeWarxsNNuWDcFEDhos_KSo8F6iZnlwg4d_6IWCMX2w35E5tb/exec";
+const URL = "https://script.google.com/macros/s/AKfycbwfDtxy5s52DwipaFgeeWarxsNNuWDcFEDhos_KSo8F6iZnlwg4d_6IWCMX2w35E5tb/exec";
 
-/* ---------- 1. Бургер-меню ---------- */
-const burger = document.getElementById("burger");
-const nav = document.getElementById("nav");
-
-if (burger && nav) {
-  burger.addEventListener("click", () => {
-    burger.classList.toggle("active");
-    nav.classList.toggle("open");
-  });
-  nav.querySelectorAll(".nav__link").forEach((link) => {
-    link.addEventListener("click", () => {
-      burger.classList.remove("active");
-      nav.classList.remove("open");
-    });
-  });
-  document.addEventListener("click", (e) => {
-    if (
-      !nav.contains(e.target) &&
-      !burger.contains(e.target) &&
-      nav.classList.contains("open")
-    ) {
-      burger.classList.remove("active");
-      nav.classList.remove("open");
-    }
-  });
-}
-
-/* ---------- 2. Плавный скролл ---------- */
-document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-  anchor.addEventListener("click", function (e) {
-    const id = this.getAttribute("href");
-    if (!id || id === "#") return;
-    const target = document.querySelector(id);
-    if (!target) return;
-    e.preventDefault();
-    const y = target.getBoundingClientRect().top + window.pageYOffset - 82;
-    window.scrollTo({ top: y, behavior: "smooth" });
-  });
-});
-
-/* ---------- 3. Форма заявки ---------- */
 const form = document.getElementById("order-form");
-const submitBtn = document.getElementById("submit-btn");
+const btn = document.getElementById("submit-btn");
 const statusEl = document.getElementById("form-status");
 
-const phoneInput = document.getElementById("phone");
-if (phoneInput) {
-  phoneInput.addEventListener("input", (e) => {
-    let v = e.target.value.replace(/[^\d+()\-\s]/g, "");
-    if (v.length > 18) v = v.slice(0, 18);
-    e.target.value = v;
-    e.target.classList.remove("error");
-  });
-}
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-form?.querySelectorAll("input, textarea, select").forEach((f) => {
-  f.addEventListener("input", () => f.classList.remove("error"));
-  f.addEventListener("change", () => f.classList.remove("error"));
-});
+  const data = {
+    name: form.name.value.trim(),
+    phone: form.phone.value.trim(),
+    plan: form.plan ? form.plan.value : "",
+    comment: form.comment ? form.comment.value.trim() : "",
+  };
 
-function showStatus(msg, type) {
-  if (!statusEl) return;
-  statusEl.textContent = msg;
-  statusEl.className = "form__status " + (type || "");
-}
-
-function validate(data) {
-  const errors = [];
-  if (!data.name || data.name.trim().length < 2) {
-    errors.push("Введите имя (минимум 2 символа)");
-    document.getElementById("name")?.classList.add("error");
+  if (data.name.length < 2) {
+    statusEl.textContent = "Введите имя";
+    statusEl.className = "form__status error";
+    return;
   }
-  const digits = (data.phone || "").replace(/\D/g, "");
-  if (digits.length < 10) {
-    errors.push("Введите корректный телефон");
-    document.getElementById("phone")?.classList.add("error");
+  if (data.phone.replace(/\D/g, "").length < 10) {
+    statusEl.textContent = "Введите телефон";
+    statusEl.className = "form__status error";
+    return;
   }
-  return errors;
-}
 
-if (form) {
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  btn.disabled = true;
+  btn.textContent = "Отправляем...";
+  statusEl.textContent = "";
+  statusEl.className = "form__status";
 
-    const data = {
-      name: (form.name?.value || "").trim(),
-      phone: (form.phone?.value || "").trim(),
-      plan: (form.plan?.value || "").trim(),
-      comment: (form.comment?.value || "").trim(),
-      page: window.location.href,
-      timestamp: new Date().toLocaleString("ru-RU"),
-    };
-
-    const errors = validate(data);
-    if (errors.length) {
-      showStatus(errors[0], "error");
-      return;
-    }
-
-    submitBtn.disabled = true;
-    const original = submitBtn.textContent;
-    submitBtn.textContent = "Отправляем...";
-    showStatus("", "");
-
-    try {
-      // ⚠️ КЛЮЧЕВОЙ МОМЕНТ:
-      // - Content-Type: text/plain  → браузер не делает preflight (CORS не мешает)
-      // - body: JSON.stringify(...) → данные доходят до скрипта как JSON
-      // - mode: no-cors             → ответ нельзя прочитать, но запрос уходит
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8",
-        },
-        body: JSON.stringify(data),
-      });
-
-      showStatus(
-        "✅ Заявка отправлена! Перезвоним в течение 15 минут ☕",
-        "success"
-      );
-      form.reset();
-      console.log("✅ POST sent:", data);
-    } catch (err) {
-      console.error("❌ Submit error:", err);
-      showStatus(
-        "❌ Не удалось отправить. Позвоните: +7 (999) 555-22-11",
-        "error"
-      );
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = original;
-    }
-  });
-}
-
-/* ---------- 4. Анимация появления блоков ---------- */
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = "1";
-        entry.target.style.transform = "translateY(0)";
-        observer.unobserve(entry.target);
-      }
+  try {
+    await fetch(URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(data),
     });
-  },
-  { threshold: 0.12, rootMargin: "0px 0px -50px 0px" }
-);
 
-document
-  .querySelectorAll(".card, .why-item, .review, .menu-item, .geo-block, .form")
-  .forEach((el) => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(20px)";
-    el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
-    observer.observe(el);
-  });
-
-/* ---------- 5. Активный пункт меню при скролле ---------- */
-const sections = document.querySelectorAll("section[id]");
-const navLinks = document.querySelectorAll(".nav__link");
-if (sections.length && navLinks.length) {
-  window.addEventListener(
-    "scroll",
-    () => {
-      const y = window.pageYOffset;
-      sections.forEach((s) => {
-        const top = s.offsetTop - 120;
-        if (y >= top && y < top + s.offsetHeight) {
-          navLinks.forEach((l) =>
-            l.classList.toggle("active", l.getAttribute("href") === "#" + s.id)
-          );
-        }
-      });
-    },
-    { passive: true }
-  );
-}
-
-/* ---------- 6. Выбор тарифа из блока тарифов ---------- */
-const planSelect = document.getElementById("plan");
-document.querySelectorAll(".card--plan .btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const name = btn
-      .closest(".card--plan")
-      ?.querySelector("h3")
-      ?.textContent?.trim();
-    if (!name || !planSelect) return;
-    const opt = Array.from(planSelect.options).find((o) =>
-      o.value.toLowerCase().includes(name.toLowerCase())
-    );
-    if (opt) planSelect.value = opt.value;
-  });
+    statusEl.textContent = "✅ Заявка отправлена!";
+    statusEl.className = "form__status success";
+    form.reset();
+  } catch (err) {
+    statusEl.textContent = "❌ Ошибка отправки";
+    statusEl.className = "form__status error";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Отправить";
+  }
 });
