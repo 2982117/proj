@@ -3,7 +3,7 @@
    Отправка заявки в Google Sheets
    ============================================================ */
 
-const URL = "https://script.google.com/macros/s/AKfycbwfDtxy5s52DwipaFgeeWarxsNNuWDcFEDhos_KSo8F6iZnlwg4d_6IWCMX2w35E5tb/exec";
+const URL = "https://script.google.com/macros/s/AKfycbyqnZiTbhJYMpUfKhutYYpBKoPgdzPGwSAkWb383Wj5xp2qRwLNem6wb3CYK4i0iA/exec";
 
 const form = document.getElementById("order-form");
 const btn = document.getElementById("submit-btn");
