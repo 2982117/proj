@@ -2,7 +2,7 @@
    BrewLab — script.js (v3, JSON через text/plain)
    ============================================================ */
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjE1T8sR0cIZS9ia67ffdmVIoa38NosqUHPPCFyfzUHk2Z3ga9-Tl4EbhqK0QQmYDV/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/library/d/1p5OOvuVXVtXkqAFOHsFlgGU9LB3wRvh64jek0FWv6y73SWXdSmTNZ32p/4";
 
 /* ---------- 1. Бургер ---------- */
 const burger = document.getElementById("burger");
