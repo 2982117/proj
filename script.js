@@ -7,7 +7,7 @@
    Получите его после публикации скрипта (см. инструкцию).
    Замените ссылку ниже на свою.
    ------------------------------------------------------------ */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdQz0H1J6MLgCCIWIoy8D8FFDJwIfiu1ZtwsHWKmZwDYk_ssu90mGvEl2JveaFIZ11/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIkKLAMF4rkC69OnGnhWxyKZKjhzzvfgHWVzFWqTv_BdZ5sLcOK8oHvFxZBC7_qtiu/exec";
 
 /* ------------------------------------------------------------
    1. МОБИЛЬНОЕ МЕНЮ (бургер)
