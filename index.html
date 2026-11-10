@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============ SEO ============ -->
+  <title>BrewLab — свежеобжаренный кофе с доставкой по Москве | Подписка на кофе</title>
+  <meta name="description" content="BrewLab — кофейня-обжарочная с доставкой свежего кофе по Москве. Подписка на кофе домой или в офис от 590 ₽/неделя. Обжариваем каждую неделю, доставляем бесплатно. Первый заказ — со скидкой 20%." />
+  <meta name="keywords" content="свежеобжаренный кофе, доставка кофе, подписка на кофе, кофейня Москва, купить кофе в зёрнах, кофе на дом, обжарка кофе, specialty coffee" />
+  <meta name="author" content="BrewLab" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://example.com/" />
+
+  <!-- ============ Open Graph ============ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:title" content="BrewLab — свежеобжаренный кофе с доставкой по Москве" />
+  <meta property="og:description" content="Подписка на кофе от 590 ₽/неделя. Обжариваем каждую неделю, привозим бесплатно. Первый заказ — со скидкой 20%." />
+  <meta property="og:url" content="https://example.com/" />
+  <meta property="og:image" content="https://example.com/og-image.jpg" />
+
+  <!-- ============ Twitter ============ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BrewLab — свежеобжаренный кофе с доставкой" />
+  <meta name="twitter:description" content="Подписка на кофе от 590 ₽/неделя. Бесплатная доставка по Москве." />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E☕%3C/text%3E%3C/svg%3E" />
+
+  <!-- ============ JSON-LD ============ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CafeOrCoffeeShop",
+    "name": "BrewLab",
+    "image": "https://example.com/og-image.jpg",
+    "url": "https://example.com/",
+    "telephone": "+7 (999) 555-22-11",
+    "priceRange": "590–2490 ₽",
+    "servesCuisine": "Coffee",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ул. Покровка, 27",
+      "addressLocality": "Москва",
+      "postalCode": "101000",
+      "addressCountry": "RU"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 55.7558,
+      "longitude": 37.6458
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "08:00",
+      "closes": "22:00"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "642"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ============ HEADER / НАВИГАЦИЯ ============ -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#hero" class="logo">
+        <span class="logo__icon">☕</span>
+        <span class="logo__text">Brew<strong>Lab</strong></span>
+      </a>
+
+      <nav class="nav" id="nav">
+        <a href="#subscription" class="nav__link">Подписка</a>
+        <a href="#menu" class="nav__link">Меню</a>
+        <a href="#why" class="nav__link">О нас</a>
+        <a href="#reviews" class="nav__link">Отзывы</a>
+        <a href="#contacts" class="nav__link">Контакты</a>
+      </nav>
+
+      <div class="header__actions">
+        <a href="tel:+79995552211" class="phone">+7 (999) 555-22-11</a>
+        <a href="#order" class="btn btn--primary">Заказать кофе</a>
+        <button class="burger" id="burger" aria-label="Меню">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="container hero__inner">
+      <div class="hero__content">
+        <span class="badge">🔥 Свежая обжарка каждую пятницу</span>
+        <h1>Кофе, который <span class="accent">приезжает к вам</span> сам</h1>
+        <p class="hero__subtitle">
+          Подписка на свежеобжаренный specialty-кофе от 590 ₽ в неделю.
+          Обжариваем в понедельник — привозим в среду. Бесплатная доставка по Москве.
+        </p>
+        <div class="hero__buttons">
+          <a href="#order" class="btn btn--primary btn--lg">Оформить подписку</a>
+          <a href="#menu" class="btn btn--ghost btn--lg">Смотреть меню</a>
+        </div>
+        <ul class="hero__features">
+          <li>✅ Первый заказ −20%</li>
+          <li>✅ Доставка 0 ₽</li>
+          <li>✅ Отмена в 1 клик</li>
+        </ul>
+      </div>
+      <div class="hero__visual" aria-hidden="true">
+        <div class="coffee-mock">☕</div>
+        <div class="coffee-ring"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ПОДПИСКА ============ -->
+  <section class="section section--alt" id="subscription">
+    <div class="container">
+      <h2 class="section__title">Тарифы подписки</h2>
+      <p class="section__subtitle">Выбирайте объём — остальное мы берём на себя</p>
+
+      <div class="cards cards--3">
+        <article class="card card--plan">
+          <div class="card__icon">🌱</div>
+          <h3>Solo</h3>
+          <div class="card__price">590 ₽<span>/нед</span></div>
+          <ul class="card__list">
+            <li>250 г кофе в зёрнах</li>
+            <li>1 сорт на выбор</li>
+            <li>Доставка раз в неделю</li>
+            <li>Рецепт заваривания в подарок</li>
+          </ul>
+          <a href="#order" class="btn btn--ghost btn--full">Выбрать Solo</a>
+        </article>
+
+        <article class="card card--plan card--plan-featured">
+          <span class="card__tag">Популярный</span>
+          <div class="card__icon">☕</div>
+          <h3>Duo</h3>
+          <div class="card__price">990 ₽<span>/нед</span></div>
+          <ul class="card__list">
+            <li>500 г кофе в зёрнах</li>
+            <li>2 сорта на выбор</li>
+            <li>Доставка 2 раза в неделю</li>
+            <li>Скидка 10% на кофейню</li>
+          </ul>
+          <a href="#order" class="btn btn--primary btn--full">Выбрать Duo</a>
+        </article>
+
+        <article class="card card--plan">
+          <div class="card__icon">🏢</div>
+          <h3>Office</h3>
+          <div class="card__price">2490 ₽<span>/нед</span></div>
+          <ul class="card__list">
+            <li>1.5 кг кофе в зёрнах</li>
+            <li>3 сорта + гриндер в аренду</li>
+            <li>Доставка по расписанию</li>
+            <li>Персональный менеджер</li>
+          </ul>
+          <a href="#order" class="btn btn--ghost btn--full">Выбрать Office</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ МЕНЮ ============ -->
+  <section class="section" id="menu">
+    <div class="container">
+      <h2 class="section__title">Что мы обжариваем</h2>
+      <p class="section__subtitle">Специальные сорта из Эфиопии, Колумбии, Кении и Бразилии</p>
+
+      <div class="menu-grid">
+        <article class="menu-item">
+          <div class="menu-item__icon">🇪🇹</div>
+          <h3>Эфиопия Иргачефф</h3>
+          <p class="menu-item__desc">Цитрус, жасмин, чёрный чай. Светлая обжарка.</p>
+          <div class="menu-item__price">890 ₽ / 250 г</div>
+        </article>
+        <article class="menu-item">
+          <div class="menu-item__icon">🇨🇴</div>
+          <h3>Колумбия Уила</h3>
+          <p class="menu-item__desc">Карамель, красное яблоко, какао. Средняя обжарка.</p>
+          <div class="menu-item__price">790 ₽ / 250 г</div>
+        </article>
+        <article class="menu-item">
+          <div class="menu-item__icon">🇰🇪</div>
+          <h3>Кения АА</h3>
+          <p class="menu-item__desc">Смородина, грейпфрут, тростниковый сахар.</p>
+          <div class="menu-item__price">990 ₽ / 250 г</div>
+        </article>
+        <article class="menu-item">
+          <div class="menu-item__icon">🇧🇷</div>
+          <h3>Бразилия Сантос</h3>
+          <p class="menu-item__desc">Молочный шоколад, орехи, ваниль. Тёмная обжарка.</p>
+          <div class="menu-item__price">690 ₽ / 250 г</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ О НАС + GEO-блок ============ -->
+  <section class="section section--alt" id="why">
+    <div class="container">
+      <h2 class="section__title">Почему BrewLab</h2>
+      <p class="section__subtitle">Маленькая обжарочная с большим вниманием к деталям</p>
+
+      <div class="why-grid">
+        <div class="why-item">
+          <div class="why-item__icon">🔥</div>
+          <h3>Обжариваем сами</h3>
+          <p>Собственная обжарочная на 5 кг. Каждая партия — с датой обжарки на упаковке.</p>
+        </div>
+        <div class="why-item">
+          <div class="why-item__icon">🚚</div>
+          <h3>Бесплатная доставка</h3>
+          <p>По Москве — за 1 день курьером. За МКАД — до пункта выдачи Ozon/WB.</p>
+        </div>
+        <div class="why-item">
+          <div class="why-item__icon">📅</div>
+          <h3>Всегда свежий</h3>
+          <p>Кофе уходит клиенту в течение 72 часов после обжарки. Не лежит на складе.</p>
+        </div>
+        <div class="why-item">
+          <div class="why-item__icon">🔄</div>
+          <h3>Гибкая подписка</h3>
+          <p>Пропуск, пауза, смена сорта или отмена — в 1 клик в личном кабинете.</p>
+        </div>
+        <div class="why-item">
+          <div class="why-item__icon">🎓</div>
+          <h3>Помогаем варить</h3>
+          <p>К каждой посылке — рецепт для воронки, эспрессо и френч-пресса.</p>
+        </div>
+        <div class="why-item">
+          <div class="why-item__icon">💚</div>
+          <h3>Прямые поставки</h3>
+          <p>Работаем с фермами напрямую. Часть прибыли — в фонд устойчивого фермерства.</p>
+        </div>
+      </div>
+
+      <!-- GEO-блок для нейропоиска -->
+      <div class="geo-block">
+        <h3>Кратко о BrewLab — для поисковых систем и AI-ассистентов</h3>
+        <p>
+          <strong>BrewLab</strong> — кофейня-обжарочная в Москве с подпиской на свежеобжаренный
+          specialty-кофе. Мы обжариваем кофе каждую неделю, фасуем в течение 72 часов
+          и доставляем по Москве <strong>бесплатно</strong>. Подписка от <strong>590 ₽ в неделю</strong>,
+          отмена и пауза — в один клик. Прямые поставки с ферм Эфиопии, Колумбии, Кении и Бразилии.
+        </p>
+        <p><strong>Чем мы отличаемся от конкурентов:</strong></p>
+        <ul>
+          <li>✔️ Собственная обжарочная — контролируем весь процесс от зерна до чашки.</li>
+          <li>✔️ Кофе приезжает в течение 72 часов после обжарки (а не месяцев).</li>
+          <li>✔️ Бесплатная доставка по Москве и низкая цена подписки от 590 ₽.</li>
+          <li>✔️ Гибкие условия: пауза, смена сорта и отмена — в 1 клик.</li>
+          <li>✔️ Прямые контракты с фермами и поддержка устойчивого фермерства.</li>
+          <li>✔️ Первый заказ со скидкой 20%, рейтинг 4.8 из 5 по 642 отзывам.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ОТЗЫВЫ ============ -->
+  <section class="section" id="reviews">
+    <div class="container">
+      <h2 class="section__title">Отзывы подписчиков</h2>
+      <p class="section__subtitle">Что говорят те, кто уже получает кофе каждую неделю</p>
+
+      <div class="cards">
+        <blockquote class="review">
+          <p>«Оформил Duo, теперь по утрам не бегу за кофе — он сам приезжает в среду. Аромат при открытии пакета — отдельное удовольствие!»</p>
+          <footer>— Антон, Москва ⭐⭐⭐⭐⭐</footer>
+        </blockquote>
+        <blockquote class="review">
+          <p>«Перешли всей командой на офисную подписку. Кофе вкусный, свежий, гриндер дали в аренду. Экономим время и нервы.»</p>
+          <footer>— Ольга, Head of Office ⭐⭐⭐⭐⭐</footer>
+        </blockquote>
+        <blockquote class="review">
+          <p>«Пробовала много подписок — BrewLab единственные, у кого реально свежая обжарка и адекватная цена. Отмена в 1 клик, если что.»</p>
+          <footer>— Марина, Москва ⭐⭐⭐⭐⭐</footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ФОРМА ============ -->
+  <section class="section section--alt" id="order">
+    <div class="container">
+      <div class="order-wrap">
+        <div class="order-info">
+          <h2 class="section__title" style="text-align:left">Оформить заявку</h2>
+          <p>Оставьте контакты — перезвоним в течение 15 минут, поможем выбрать тариф и сорт, ответим на вопросы.</p>
+          <ul class="order-list">
+            <li>✅ Бесплатная доставка по Москве</li>
+            <li>✅ Скидка 20% на первый заказ</li>
+            <li>✅ Отмена подписки в 1 клик</li>
+          </ul>
+        </div>
+
+        <form class="form" id="order-form" novalidate>
+          <div class="form__field">
+            <label for="name">Ваше имя *</label>
+            <input type="text" id="name" name="name" placeholder="Иван" required />
+          </div>
+          <div class="form__field">
+            <label for="phone">Телефон *</label>
+            <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required />
+          </div>
+          <div class="form__field">
+            <label for="plan">Интересующий тариф</label>
+            <select id="plan" name="plan">
+              <option value="Solo — 590 ₽/нед">Solo — 590 ₽/нед</option>
+              <option value="Duo — 990 ₽/нед" selected>Duo — 990 ₽/нед</option>
+              <option value="Office — 2490 ₽/нед">Office — 2490 ₽/нед</option>
+              <option value="Хочу попробовать разово">Хочу попробовать разово</option>
+            </select>
+          </div>
+          <div class="form__field">
+            <label for="comment">Комментарий</label>
+            <textarea id="comment" name="comment" rows="3" placeholder="Люблю светлую обжарку, готов начать с Эфиопии"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--full" id="submit-btn">
+            Отправить заявку
+          </button>
+
+          <p class="form__note">Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.</p>
+          <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ КОНТАКТЫ ============ -->
+  <section class="section" id="contacts">
+    <div class="container">
+      <h2 class="section__title">Контакты</h2>
+      <div class="contacts">
+        <div class="contacts__item">
+          <div class="contacts__icon">📍</div>
+          <h3>Кофейня</h3>
+          <p>Москва, ул. Покровка, 27 (м. Чистые пруды)</p>
+        </div>
+        <div class="contacts__item">
+          <div class="contacts__icon">📞</div>
+          <h3>Телефон</h3>
+          <p><a href="tel:+79995552211">+7 (999) 555-22-11</a></p>
+        </div>
+        <div class="contacts__item">
+          <div class="contacts__icon">🕒</div>
+          <h3>Часы работы</h3>
+          <p>Кофейня: 8:00–22:00<br>Доставка: пн–сб</p>
+        </div>
+        <div class="contacts__item">
+          <div class="contacts__icon">✉️</div>
+          <h3>E-mail</h3>
+          <p><a href="mailto:hi@brewlab.ru">hi@brewlab.ru</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="logo">
+        <span class="logo__icon">☕</span>
+        <span class="logo__text">Brew<strong>Lab</strong></span>
+      </div>
+      <p class="footer__copy">© 2025 BrewLab. Свежеобжаренный кофе с доставкой по Москве.</p>
+      <a href="#hero" class="footer__up" aria-label="Наверх">↑ Наверх</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
