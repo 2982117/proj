@@ -3,7 +3,7 @@
    Отправка: JSON через text/plain (обходит CORS)
    ============================================================ */
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjE1T8sR0cIZS9ia67ffdmVIoa38NosqUHPPCFyfzUHk2Z3ga9-Tl4EbhqK0QQmYDV/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfDtxy5s52DwipaFgeeWarxsNNuWDcFEDhos_KSo8F6iZnlwg4d_6IWCMX2w35E5tb/exec";
 
 /* ---------- 1. Бургер-меню ---------- */
 const burger = document.getElementById("burger");
