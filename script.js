@@ -1,10 +1,11 @@
 /* ============================================================
-   BrewLab — script.js (v3, JSON через text/plain)
+   BrewLab — script.js (v4, финальная версия для GitHub Pages)
+   Отправка: JSON через text/plain (обходит CORS)
    ============================================================ */
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjE1T8sR0cIZS9ia67ffdmVIoa38NosqUHPPCFyfzUHk2Z3ga9-Tl4EbhqK0QQmYDV/exec";
 
-/* ---------- 1. Бургер ---------- */
+/* ---------- 1. Бургер-меню ---------- */
 const burger = document.getElementById("burger");
 const nav = document.getElementById("nav");
 
@@ -20,7 +21,11 @@ if (burger && nav) {
     });
   });
   document.addEventListener("click", (e) => {
-    if (!nav.contains(e.target) && !burger.contains(e.target) && nav.classList.contains("open")) {
+    if (
+      !nav.contains(e.target) &&
+      !burger.contains(e.target) &&
+      nav.classList.contains("open")
+    ) {
       burger.classList.remove("active");
       nav.classList.remove("open");
     }
@@ -40,7 +45,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   });
 });
 
-/* ---------- 3. Форма ---------- */
+/* ---------- 3. Форма заявки ---------- */
 const form = document.getElementById("order-form");
 const submitBtn = document.getElementById("submit-btn");
 const statusEl = document.getElementById("form-status");
@@ -105,22 +110,31 @@ if (form) {
     showStatus("", "");
 
     try {
-      // ⚠️ JSON.stringify + Content-Type: text/plain —
-      // это safelisted, preflight нет, тело доходит полностью
-      // даже с mode: "no-cors"
+      // ⚠️ КЛЮЧЕВОЙ МОМЕНТ:
+      // - Content-Type: text/plain  → браузер не делает preflight (CORS не мешает)
+      // - body: JSON.stringify(...) → данные доходят до скрипта как JSON
+      // - mode: no-cors             → ответ нельзя прочитать, но запрос уходит
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        },
         body: JSON.stringify(data),
       });
 
-      showStatus("✅ Заявка отправлена! Перезвоним в течение 15 минут ☕", "success");
+      showStatus(
+        "✅ Заявка отправлена! Перезвоним в течение 15 минут ☕",
+        "success"
+      );
       form.reset();
-      console.log("✅ POST sent (JSON):", data);
+      console.log("✅ POST sent:", data);
     } catch (err) {
       console.error("❌ Submit error:", err);
-      showStatus("❌ Не удалось отправить. Позвоните: +7 (999) 555-22-11", "error");
+      showStatus(
+        "❌ Не удалось отправить. Позвоните: +7 (999) 555-22-11",
+        "error"
+      );
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = original;
@@ -128,7 +142,7 @@ if (form) {
   });
 }
 
-/* ---------- 4. Анимация ---------- */
+/* ---------- 4. Анимация появления блоков ---------- */
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -142,35 +156,48 @@ const observer = new IntersectionObserver(
   { threshold: 0.12, rootMargin: "0px 0px -50px 0px" }
 );
 
-document.querySelectorAll(".card, .why-item, .review, .menu-item, .geo-block, .form").forEach((el) => {
-  el.style.opacity = "0";
-  el.style.transform = "translateY(20px)";
-  el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
-  observer.observe(el);
-});
+document
+  .querySelectorAll(".card, .why-item, .review, .menu-item, .geo-block, .form")
+  .forEach((el) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(20px)";
+    el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+    observer.observe(el);
+  });
 
-/* ---------- 5. Подсветка меню ---------- */
+/* ---------- 5. Активный пункт меню при скролле ---------- */
 const sections = document.querySelectorAll("section[id]");
 const navLinks = document.querySelectorAll(".nav__link");
 if (sections.length && navLinks.length) {
-  window.addEventListener("scroll", () => {
-    const y = window.pageYOffset;
-    sections.forEach((s) => {
-      const top = s.offsetTop - 120;
-      if (y >= top && y < top + s.offsetHeight) {
-        navLinks.forEach((l) => l.classList.toggle("active", l.getAttribute("href") === "#" + s.id));
-      }
-    });
-  }, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      const y = window.pageYOffset;
+      sections.forEach((s) => {
+        const top = s.offsetTop - 120;
+        if (y >= top && y < top + s.offsetHeight) {
+          navLinks.forEach((l) =>
+            l.classList.toggle("active", l.getAttribute("href") === "#" + s.id)
+          );
+        }
+      });
+    },
+    { passive: true }
+  );
 }
 
-/* ---------- 6. Выбор тарифа ---------- */
+/* ---------- 6. Выбор тарифа из блока тарифов ---------- */
 const planSelect = document.getElementById("plan");
 document.querySelectorAll(".card--plan .btn").forEach((btn) => {
   btn.addEventListener("click", () => {
-    const name = btn.closest(".card--plan")?.querySelector("h3")?.textContent?.trim();
+    const name = btn
+      .closest(".card--plan")
+      ?.querySelector("h3")
+      ?.textContent?.trim();
     if (!name || !planSelect) return;
-    const opt = Array.from(planSelect.options).find((o) => o.value.toLowerCase().includes(name.toLowerCase()));
+    const opt = Array.from(planSelect.options).find((o) =>
+      o.value.toLowerCase().includes(name.toLowerCase())
+    );
     if (opt) planSelect.value = opt.value;
   });
 });
